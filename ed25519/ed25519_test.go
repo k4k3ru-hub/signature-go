@@ -99,9 +99,9 @@ func TestSignAndVerifyJson(t *testing.T) {
 //
 func TestSignAndVerifyMap(t *testing.T) {
 	pubStr, privStr, err := GenerateKeyPairBase64()
-    if err != nil {
-        t.Fatalf("Failed to generate keys: %v", err)
-    }
+	if err != nil {
+		t.Fatalf("Failed to generate keys: %v", err)
+	}
 
 	data := map[string]interface{}{
 		"accountId": "user123",

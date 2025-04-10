@@ -17,7 +17,7 @@ const (
 
 
 //
-// Main.
+// Main process.
 //
 func main() {
 	// Initialize CLI.

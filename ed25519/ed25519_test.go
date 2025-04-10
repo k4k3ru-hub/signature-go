@@ -73,7 +73,10 @@ func TestSignAndVerifyJson(t *testing.T) {
             {Side: "SELL", Amount: "0.2"},
         },
     }
-	jsonBytes, _ := json.Marshal(data)
+	jsonBytes, err := json.Marshal(data)
+	if err != nil {
+		t.Fatalf("Failed to marshal JSON: %v", err)
+	}
 
 	signature, err := SignJson(jsonBytes, privStr)
 	if err != nil {
@@ -90,3 +93,43 @@ func TestSignAndVerifyJson(t *testing.T) {
 	}	
 }
 
+
+//
+// Test for signing and verifying map object.
+//
+func TestSignAndVerifyMap(t *testing.T) {
+	pubStr, privStr, err := GenerateKeyPairBase64()
+    if err != nil {
+        t.Fatalf("Failed to generate keys: %v", err)
+    }
+
+	data := map[string]interface{}{
+		"accountId": "user123",
+		"timestamp": 1712000000000,
+		"params": map[string]interface{}{
+			"symbol": "BTC/USDT",
+		},
+		"orders": []map[string]interface{}{
+			{"side": "BUY", "amount": "0.1"},
+			{"side": "SELL", "amount": "0.2"},
+		},
+	}
+	jsonBytes, err := json.Marshal(data)
+	if err != nil {
+		t.Fatalf("Failed to marshal JSON: %v", err)
+	}
+
+	signature, err := SignJson(jsonBytes, privStr)
+	if err != nil {
+		t.Fatalf("Failed to sign: %v", err)
+	}
+	t.Logf("Signed JSON. (signature: %s)\n", string(signature))
+
+	ok, err := VerifyJson(jsonBytes, pubStr, signature)
+	if err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+	if !ok {
+		t.Error("Failed to verify data.")
+	}
+}

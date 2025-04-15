@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"sort"
+	"time"
 )
 
 
@@ -26,6 +27,17 @@ func CanonicalizeJSON(jsonBytes []byte) ([]byte, error) {
 		return nil, err
 	}
 	return buf.Bytes(), nil
+}
+
+
+//
+// Verify UNIX timestamp.
+//
+func VerifyTimestamp(unixTimestamp int64, tolerance time.Duration) bool {
+	now := time.Now().Unix()
+	upper := now + int64(tolerance.Seconds())
+	lower := now - int64(tolerance.Seconds())
+	return lower <= unixTimestamp && unixTimestamp <= upper
 }
 
 

@@ -16,7 +16,7 @@ func TestCanonicalizeJsonForJsonString(t *testing.T) {
 	jsonStr := `{"b":2,"a":1}`
 	expected := `{"a":1,"b":2}`
 
-	out, err := CanonicalizeJSON([]byte(jsonStr))
+	out, err := CanonicalizeJSON(jsonStr)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -82,10 +82,9 @@ func TestCanonicalizeJsonForJsonStructNestedParams(t *testing.T) {
 			{Side: "SELL", Amount: "0.2"},
 		},
 	}
-	jsonBytes, _ := json.Marshal(data)
 	expected := `{"accountId":"user123","orders":[{"amount":"0.1","side":"BUY"},{"amount":"0.2","side":"SELL"}],"params":{"symbol":"BTC/USDT"},"timestamp":1712000000000}`
 
-	out, err := CanonicalizeJSON(jsonBytes)
+	out, err := CanonicalizeJSON(data)
     if err != nil {
         t.Fatalf("Unexpected error: %v", err)
     }
@@ -112,15 +111,14 @@ func TestCanonicalizeJsonForMapNestedParams(t *testing.T) {
 			{"side": "BUY", "amount": "0.3"},
 		},
 	}
-	jsonBytes, _ := json.Marshal(data)
 	expected := `{"accountId":"user123","orders":[{"amount":"0.1","side":"BUY"},{"amount":"0.2","side":"SELL"},{"amount":"0.3","side":"BUY"}],"params":{"symbol":"BTC/USDT"},"timestamp":1712000000000}`
 
-	out, err := CanonicalizeJSON(jsonBytes)
+	out, err := CanonicalizeJSON(data)
     if err != nil {
         t.Fatalf("Unexpected error: %v", err)
     }
     if string(out) != expected {
 		t.Errorf("Unexpected value. (expected: %s, got: %s)", expected, string(out))
     }
-	t.Logf("Canonicalized JSON: %s.\n", string(jsonBytes))
+	t.Logf("Canonicalized JSON: %v.\n", data)
 }

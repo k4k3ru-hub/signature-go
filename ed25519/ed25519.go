@@ -7,7 +7,6 @@ import (
 	"crypto/ed25519"
 	"crypto/rand"
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
 
 	mySignature "github.com/k4k3ru-hub/signature-go"
@@ -40,12 +39,7 @@ func SignJson[T any](data T, privateKeyBase64 string) (string, error) {
 		return "", fmt.Errorf("Invalid private key length.\n")
 	}
 
-	jsonBytes, err := json.Marshal(data)
-	if err != nil {
-		return "", err
-	}
-
-	canonMsg, err := mySignature.CanonicalizeJSON(jsonBytes)
+	canonMsg, err := mySignature.CanonicalizeJSON(data)
 	if err != nil {
 		return "", err
 	}
@@ -72,12 +66,7 @@ func VerifyJson[T any](data T, publicKeyBase64 string, signatureBase64 string) (
 		return false, fmt.Errorf("failed to decode signature: %w", err)
 	}
 
-	jsonBytes, err := json.Marshal(data)
-	if err != nil {
-		return false, fmt.Errorf("failed to marshal struct: %w", err)
-	}
-
-	canonMsg, err := mySignature.CanonicalizeJSON(jsonBytes)
+	canonMsg, err := mySignature.CanonicalizeJSON(data)
 	if err != nil {
 		return false, fmt.Errorf("failed to canonicalize JSON: %w", err)
 	}

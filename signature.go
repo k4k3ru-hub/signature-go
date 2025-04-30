@@ -8,6 +8,8 @@ import (
 	"encoding/json"
 	"sort"
 	"time"
+
+	
 )
 
 
@@ -16,14 +18,29 @@ import (
 // Returns a compact, key-sorted version.
 // This is useful for generating consistent signatures over structured data.
 //
-func CanonicalizeJSON(jsonBytes []byte) ([]byte, error) {
-	var data interface{}
-	if err := json.Unmarshal(jsonBytes, &data); err != nil {
-		return nil, err
+func CanonicalizeJSON(data interface{}) ([]byte, error) {
+	var normalized interface{}
+	switch v := data.(type) {
+	case string:
+		if err := json.Unmarshal([]byte(v), &normalized); err != nil {
+			return nil, err
+		}
+	case []byte:
+		if err := json.Unmarshal(v, &normalized); err != nil {
+			return nil, err
+		}
+	default:
+		jsonBytes, err := json.Marshal(v)
+		if err != nil {
+			return nil, err
+		}
+		if err := json.Unmarshal(jsonBytes, &normalized); err != nil {
+			return nil, err
+		}
 	}
 
 	var buf bytes.Buffer
-	if err := encodeCanonical(&buf, data); err != nil {
+	if err := encodeCanonical(&buf, normalized); err != nil {
 		return nil, err
 	}
 	return buf.Bytes(), nil

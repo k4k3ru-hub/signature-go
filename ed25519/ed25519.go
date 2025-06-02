@@ -67,7 +67,6 @@ func VerifyJson[T any](data T, publicKeyBase64 string, signatureBase64 string) (
 	}
 
 	canonMsg, err := mySignature.CanonicalizeJSON(data)
-fmt.Printf("canonMsg: %s\n", canonMsg)
 	if err != nil {
 		return false, fmt.Errorf("failed to canonicalize JSON: %w", err)
 	}
